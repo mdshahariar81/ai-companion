@@ -1,0 +1,187 @@
+import { useState } from "react";
+import ProzynCore from "./components/ProzynCore";
+import "./App.css";
+
+type Persona = "sara" | "alex";
+type CoreState = "idle" | "listening" | "thinking" | "speaking";
+
+const stateLabels: Record<CoreState, string> = {
+  idle: "Ready",
+  listening: "Listening",
+  thinking: "Thinking",
+  speaking: "Speaking",
+};
+
+function App() {
+  const [persona, setPersona] = useState<Persona>("sara");
+  const [coreState, setCoreState] = useState<CoreState>("idle");
+  const [chatOpen, setChatOpen] = useState(false);
+
+  const handleCoreInteraction = () => {
+    setCoreState((current) =>
+      current === "listening" ? "idle" : "listening",
+    );
+  };
+
+  return (
+    <main className="prozyn-app">
+      <div className="ambient ambient-one" />
+      <div className="ambient ambient-two" />
+      <div className="grid-overlay" />
+
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-mark">
+            <span />
+            <span />
+          </div>
+
+          <div>
+            <div className="brand-name">PROZYN</div>
+            <div className="brand-subtitle">
+              PERSONAL INTELLIGENCE SYSTEM
+            </div>
+          </div>
+        </div>
+
+        <div className="system-status">
+          <span className="status-dot" />
+          <span>LOCAL CORE</span>
+          <span className="status-divider" />
+          <span>SECURE</span>
+        </div>
+
+        <button
+          className="icon-button"
+          type="button"
+          aria-label="Open settings"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" />
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.46 15a1.7 1.7 0 0 0-1.56-1.03H6.7v-2.4h.2a1.7 1.7 0 0 0 1.56-1.03 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.03-1.56V5.5h2.4v.24a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l-.06-.06 1.7 1.7-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 1.56 1.03h.24v2.4h-.24A1.7 1.7 0 0 0 19.4 15Z" />
+          </svg>
+        </button>
+      </header>
+
+      <section className="core-stage">
+        <div className="state-label">
+          <span className={`state-pulse ${coreState}`} />
+          {stateLabels[coreState]}
+        </div>
+
+        <button
+          className={`ai-core ${coreState}`}
+          type="button"
+          onClick={handleCoreInteraction}
+          aria-label={`${stateLabels[coreState]} AI core`}
+        >
+          <ProzynCore state={coreState} />
+        </button>
+
+        <div className="core-caption">
+          <span>{persona === "sara" ? "SARA" : "ALEX"}</span>
+          <small>PERSONAL INTELLIGENCE CORE</small>
+        </div>
+
+        <div className="voice-hint">
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+          <span />
+        </div>
+      </section>
+
+      <div className="bottom-controls">
+        <div className="persona-switcher">
+          <button
+            className={persona === "sara" ? "active sara" : ""}
+            type="button"
+            onClick={() => setPersona("sara")}
+          >
+            <span className="persona-indicator sara-indicator" />
+            <span>SARA</span>
+            <small>Companion</small>
+          </button>
+
+          <button
+            className={persona === "alex" ? "active alex" : ""}
+            type="button"
+            onClick={() => setPersona("alex")}
+          >
+            <span className="persona-indicator alex-indicator" />
+            <span>ALEX</span>
+            <small>Assistant</small>
+          </button>
+        </div>
+
+        <button
+          className={`mic-button ${
+            coreState === "listening" ? "active" : ""
+          }`}
+          type="button"
+          onClick={handleCoreInteraction}
+          aria-label="Toggle voice interaction"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="9" y="3" width="6" height="11" rx="3" />
+            <path d="M5.5 11.5a6.5 6.5 0 0 0 13 0" />
+            <path d="M12 18v3" />
+            <path d="M9 21h6" />
+          </svg>
+        </button>
+
+        <button
+          className={`chat-launcher ${chatOpen ? "active" : ""}`}
+          type="button"
+          onClick={() => setChatOpen((open) => !open)}
+          aria-label="Open chat"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M5 6.5A2.5 2.5 0 0 1 7.5 4h9A2.5 2.5 0 0 1 19 6.5v7a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 3v-3.5A2.5 2.5 0 0 1 4 13.5v-7A2.5 2.5 0 0 1 5 6.5Z" />
+            <path d="M8 9h8M8 12h5" />
+          </svg>
+          <span>CHAT</span>
+        </button>
+      </div>
+
+      <footer className="footer-status">
+        <span>SESSION 01</span>
+        <span>•</span>
+        <span>LOCAL PROCESSING</span>
+        <span>•</span>
+        <span>NO CLOUD CONNECTION</span>
+      </footer>
+
+      {chatOpen && (
+        <aside className="chat-panel">
+          <div className="chat-panel-header">
+            <div>
+              <span className="panel-kicker">PRIVATE CHANNEL</span>
+              <strong>{persona === "sara" ? "SARA" : "ALEX"}</strong>
+            </div>
+
+            <button
+              type="button"
+              className="panel-close"
+              onClick={() => setChatOpen(false)}
+              aria-label="Close chat"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="chat-empty">
+            <span className="chat-empty-line" />
+            <p>Conversation interface ready.</p>
+            <small>AI connection will be added in the next layer.</small>
+          </div>
+        </aside>
+      )}
+    </main>
+  );
+}
+
+export default App;

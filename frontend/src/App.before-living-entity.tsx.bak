@@ -1,0 +1,352 @@
+import { useEffect, useMemo, useState } from "react";
+import ProzynCore from "./components/ProzynCore";
+import "./App.css";
+
+type Persona = "sara" | "alex";
+type CoreState = "idle" | "listening" | "thinking" | "speaking";
+
+const stateLabels: Record<CoreState, string> = {
+  idle: "READY",
+  listening: "LISTENING",
+  thinking: "THINKING",
+  speaking: "SPEAKING",
+};
+
+const telemetry = [
+  { label: "CORE", value: "ONLINE" },
+  { label: "MEM", value: "LOCAL" },
+  { label: "VOICE", value: "READY" },
+  { label: "SEC", value: "ACTIVE" },
+];
+
+const activityLines = [
+  "NEURAL LINK STABLE",
+  "MEMORY INDEX READY",
+  "VOICE CHANNEL READY",
+  "LOCAL INFERENCE ACTIVE",
+];
+
+function App() {
+  const [persona, setPersona] = useState<Persona>("sara");
+  const [coreState, setCoreState] = useState<CoreState>("idle");
+  const [chatOpen, setChatOpen] = useState(false);
+  const [pulse, setPulse] = useState(0);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setPulse((current) => current + 1);
+    }, 1800);
+
+    return () => window.clearInterval(interval);
+  }, []);
+
+  const activeTelemetry = useMemo(
+    () => telemetry[pulse % telemetry.length],
+    [pulse],
+  );
+
+  const handleCoreInteraction = () => {
+    setCoreState((current) => {
+      if (current === "idle") return "listening";
+      if (current === "listening") return "thinking";
+      if (current === "thinking") return "speaking";
+      return "idle";
+    });
+  };
+
+  const handlePersonaChange = (nextPersona: Persona) => {
+    setPersona(nextPersona);
+    setCoreState("idle");
+  };
+
+  return (
+    <main className={`prozyn-app persona-${persona} state-${coreState}`}>
+      <div className="ambient ambient-one" />
+      <div className="ambient ambient-two" />
+      <div className="ambient ambient-three" />
+
+      <div className="grid-overlay" />
+      <div className="scanline-overlay" />
+      <div className="scan-sweep" />
+
+      <div className="particle-atmosphere">
+        {Array.from({ length: 42 }).map((_, index) => (
+          <span
+            className="atmosphere-particle"
+            key={index}
+            style={
+              {
+                "--particle-index": index,
+              } as React.CSSProperties
+            }
+          />
+        ))}
+      </div>
+
+      <div className="data-stream data-stream-left" aria-hidden="true">
+        {activityLines.map((line, index) => (
+          <div className="data-line" key={line}>
+            <span className="data-index">0{index + 1}</span>
+            <span>{line}</span>
+            <i />
+          </div>
+        ))}
+      </div>
+
+      <div className="data-stream data-stream-right" aria-hidden="true">
+        {activityLines
+          .slice()
+          .reverse()
+          .map((line, index) => (
+            <div className="data-line" key={line}>
+              <i />
+              <span>{line}</span>
+              <span className="data-index">A{index + 1}</span>
+            </div>
+          ))}
+      </div>
+
+      <header className="topbar">
+        <div className="brand">
+          <div className="brand-mark">
+            <span />
+            <span />
+          </div>
+
+          <div>
+            <div className="brand-name">PROZYN</div>
+            <div className="brand-subtitle">
+              PERSONAL INTELLIGENCE SYSTEM
+            </div>
+          </div>
+        </div>
+
+        <div className="system-status">
+          <span className="status-dot" />
+          <span>LOCAL CORE</span>
+          <span className="status-divider" />
+          <span>SECURE</span>
+        </div>
+
+        <button
+          className="icon-button"
+          type="button"
+          aria-label="Open settings"
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7Z" />
+            <path d="M19.4 15a1.7 1.7 0 0 0 .34 1.88l.06.06-1.7 1.7-.06-.06a1.7 1.7 0 0 0-1.88-.34 1.7 1.7 0 0 0-1.03 1.56V20h-2.4v-.2a1.7 1.7 0 0 0-1.03-1.56 1.7 1.7 0 0 0-1.88.34l-.06.06-1.7-1.7.06-.06A1.7 1.7 0 0 0 8.46 15a1.7 1.7 0 0 0-1.56-1.03H6.7v-2.4h.2a1.7 1.7 0 0 0 1.56-1.03 1.7 1.7 0 0 0-.34-1.88l-.06-.06 1.7-1.7.06.06a1.7 1.7 0 0 0 1.88.34 1.7 1.7 0 0 0 1.03-1.56V5.5h2.4v.24a1.7 1.7 0 0 0 1.03 1.56 1.7 1.7 0 0 0 1.88-.34l-.06-.06 1.7 1.7-.06.06a1.7 1.7 0 0 0-.34 1.88 1.7 1.7 0 0 0 .34 1.88 1.7 1.7 0 0 0 .? " />
+          </svg>
+        </button>
+      </header>
+
+      <section className="hud-corner hud-corner-top-left" aria-hidden="true">
+        <span />
+        <span />
+      </section>
+
+      <section
+        className="hud-corner hud-corner-top-right"
+        aria-hidden="true"
+      >
+        <span />
+        <span />
+      </section>
+
+      <section
+        className="hud-corner hud-corner-bottom-left"
+        aria-hidden="true"
+      >
+        <span />
+        <span />
+      </section>
+
+      <section
+        className="hud-corner hud-corner-bottom-right"
+        aria-hidden="true"
+      >
+        <span />
+        <span />
+      </section>
+
+      <section className="telemetry telemetry-left" aria-label="System telemetry">
+        <div className="telemetry-title">SYSTEM TELEMETRY</div>
+
+        {telemetry.map((item) => (
+          <div className="telemetry-row" key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.value}</strong>
+          </div>
+        ))}
+
+        <div className="telemetry-bar">
+          <span />
+        </div>
+      </section>
+
+      <section className="telemetry telemetry-right" aria-label="Core diagnostics">
+        <div className="telemetry-title">CORE DIAGNOSTICS</div>
+
+        <div className="diagnostic-ring">
+          <span className="diagnostic-ring-inner" />
+          <span className="diagnostic-ring-dot" />
+        </div>
+
+        <div className="diagnostic-readout">
+          <span>ACTIVE MODULE</span>
+          <strong>{activeTelemetry.label}</strong>
+        </div>
+
+        <div className="diagnostic-readout">
+          <span>PERSONA</span>
+          <strong>{persona === "sara" ? "SARA" : "ALEX"}</strong>
+        </div>
+      </section>
+
+      <section className="core-stage">
+        <div className="core-connection connection-one" />
+        <div className="core-connection connection-two" />
+        <div className="core-connection connection-three" />
+
+        <div className="state-label">
+          <span className="state-indicator" />
+          <span>{stateLabels[coreState]}</span>
+        </div>
+
+        <button
+          className="core-interaction"
+          type="button"
+          aria-label="Interact with PROZYN core"
+          onClick={handleCoreInteraction}
+        >
+          <ProzynCore state={coreState} />
+        </button>
+
+        <div className="core-readout">
+          <span>PROZYN CORE</span>
+          <strong>{persona === "sara" ? "SARA / FEMALE" : "ALEX / MALE"}</strong>
+        </div>
+      </section>
+
+      <section className="activity-console" aria-hidden="true">
+        <div className="activity-header">
+          <span>LIVE ACTIVITY</span>
+          <span>0{(pulse % 9) + 1}</span>
+        </div>
+
+        <div className="activity-wave">
+          {Array.from({ length: 28 }).map((_, index) => (
+            <span key={index} />
+          ))}
+        </div>
+
+        <div className="activity-footer">
+          <span>STREAM ACTIVE</span>
+          <span>LOCAL</span>
+        </div>
+      </section>
+
+      <div className="bottom-controls">
+        <div className="persona-switcher">
+          <button
+            className={persona === "sara" ? "active" : ""}
+            type="button"
+            onClick={() => handlePersonaChange("sara")}
+          >
+            <span className="persona-orb sara-orb" />
+            <span>
+              <strong>SARA</strong>
+              <small>Companion</small>
+            </span>
+          </button>
+
+          <button
+            className={persona === "alex" ? "active" : ""}
+            type="button"
+            onClick={() => handlePersonaChange("alex")}
+          >
+            <span className="persona-orb alex-orb" />
+            <span>
+              <strong>ALEX</strong>
+              <small>Professional</small>
+            </span>
+          </button>
+        </div>
+
+        <div className="voice-console">
+          <div className="voice-status">
+            <span className="voice-status-dot" />
+            <span>{stateLabels[coreState]}</span>
+          </div>
+
+          <button
+            className={`mic-button ${coreState === "listening" ? "active" : ""}`}
+            type="button"
+            aria-label="Toggle listening"
+            onClick={() =>
+              setCoreState((current) =>
+                current === "listening" ? "idle" : "listening",
+              )
+            }
+          >
+            <span />
+          </button>
+
+          <button
+            className={`chat-button ${chatOpen ? "active" : ""}`}
+            type="button"
+            aria-label="Toggle chat"
+            onClick={() => setChatOpen((current) => !current)}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 6.5h14v9H9.5L6 18.5v-3H5v-9Z" />
+              <path d="M8 10h8M8 13h5" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <footer className="system-footer">
+        <span>PROZYN / CORE-01</span>
+        <span>INTELLIGENCE OPERATING LAYER</span>
+        <span>V0.1.0</span>
+      </footer>
+
+      {chatOpen && (
+        <aside className="chat-panel">
+          <div className="chat-panel-header">
+            <div>
+              <span>PROZYN CHANNEL</span>
+              <strong>{persona === "sara" ? "SARA" : "ALEX"}</strong>
+            </div>
+
+            <button
+              type="button"
+              aria-label="Close chat"
+              onClick={() => setChatOpen(false)}
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="chat-panel-body">
+            <div className="chat-system-message">
+              <span>CORE</span>
+              <p>
+                Neural channel ready. Voice and chat interfaces are connected
+                to the local intelligence layer.
+              </p>
+            </div>
+          </div>
+
+          <div className="chat-input">
+            <span>Awaiting input...</span>
+            <div className="chat-input-indicator" />
+          </div>
+        </aside>
+      )}
+    </main>
+  );
+}
+
+export default App;

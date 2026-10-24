@@ -1,0 +1,1484 @@
+:root {
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+  color: #dffaff;
+  background: #02050b;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  height: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 45%, rgba(31, 81, 105, 0.12), transparent 38%),
+    #02050b;
+}
+
+button,
+input,
+textarea {
+  font: inherit;
+}
+
+button {
+  color: inherit;
+}
+
+.prozyn-app {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse at 50% 48%,
+      rgba(35, 118, 153, 0.1) 0%,
+      rgba(5, 18, 27, 0.08) 25%,
+      transparent 58%
+    ),
+    linear-gradient(180deg, #03070d 0%, #02050a 50%, #010307 100%);
+}
+
+/* =========================================================
+   ATMOSPHERE
+   ========================================================= */
+
+.ambient {
+  position: absolute;
+  z-index: -5;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.35;
+  animation: ambient-drift 12s ease-in-out infinite alternate;
+}
+
+.ambient-one {
+  top: 8%;
+  left: 10%;
+  width: 320px;
+  height: 320px;
+  background: rgba(0, 210, 255, 0.12);
+}
+
+.ambient-two {
+  right: 5%;
+  bottom: 8%;
+  width: 420px;
+  height: 420px;
+  background: rgba(105, 70, 255, 0.1);
+  animation-delay: -5s;
+}
+
+.ambient-three {
+  top: 45%;
+  left: 45%;
+  width: 300px;
+  height: 300px;
+  background: rgba(0, 255, 204, 0.06);
+  animation-duration: 18s;
+}
+
+.grid-overlay {
+  position: absolute;
+  z-index: -4;
+  inset: -20%;
+  pointer-events: none;
+  opacity: 0.2;
+  transform: perspective(900px) rotateX(58deg) translateY(24%);
+  transform-origin: center bottom;
+  background-image:
+    linear-gradient(rgba(71, 204, 233, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(71, 204, 233, 0.12) 1px, transparent 1px);
+  background-size: 54px 54px;
+  mask-image: linear-gradient(to top, black 0%, rgba(0, 0, 0, 0.65) 45%, transparent 90%);
+  animation: grid-drift 18s linear infinite;
+}
+
+.scanline-overlay {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.08;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0,
+      transparent 3px,
+      rgba(131, 241, 255, 0.055) 4px,
+      transparent 5px
+    );
+  mix-blend-mode: screen;
+}
+
+.scan-sweep {
+  position: absolute;
+  z-index: 2;
+  top: -20%;
+  left: -15%;
+  width: 130%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(84, 232, 255, 0.08) 20%,
+    rgba(84, 232, 255, 0.55) 50%,
+    rgba(84, 232, 255, 0.08) 80%,
+    transparent
+  );
+  box-shadow: 0 0 24px rgba(64, 223, 255, 0.35);
+  animation: scan-sweep 8s linear infinite;
+}
+
+.particle-atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.atmosphere-particle {
+  position: absolute;
+  top: calc(
+    5% + ((var(--particle-index) * 17) % 90) * 1%
+  );
+  left: calc(
+    3% + ((var(--particle-index) * 29) % 94) * 1%
+  );
+  width: calc(1px + (var(--particle-index) % 3) * 0.5px);
+  height: calc(1px + (var(--particle-index) % 3) * 0.5px);
+  border-radius: 50%;
+  background: rgba(110, 231, 255, 0.75);
+  box-shadow: 0 0 8px rgba(71, 220, 255, 0.55);
+  opacity: 0.18;
+  animation:
+    particle-float calc(5s + (var(--particle-index) % 7) * 1s) ease-in-out infinite,
+    particle-blink calc(2.5s + (var(--particle-index) % 5) * 0.7s) ease-in-out infinite alternate;
+  animation-delay:
+    calc((var(--particle-index) % 8) * -0.8s),
+    calc((var(--particle-index) % 6) * -0.4s);
+}
+
+/* =========================================================
+   TOP BAR
+   ========================================================= */
+
+.topbar {
+  position: absolute;
+  z-index: 20;
+  top: 0;
+  right: 0;
+  left: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  min-height: 78px;
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba(95, 209, 235, 0.08);
+  background: linear-gradient(
+    180deg,
+    rgba(1, 5, 10, 0.82),
+    rgba(1, 5, 10, 0)
+  );
+  backdrop-filter: blur(5px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+}
+
+.brand-mark {
+  position: relative;
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+}
+
+.brand-mark::before,
+.brand-mark::after,
+.brand-mark span {
+  position: absolute;
+  content: "";
+}
+
+.brand-mark::before {
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(92, 233, 255, 0.7);
+  transform: rotate(45deg);
+  box-shadow:
+    0 0 12px rgba(64, 218, 255, 0.2),
+    inset 0 0 12px rgba(64, 218, 255, 0.08);
+}
+
+.brand-mark::after {
+  width: 8px;
+  height: 8px;
+  border: 1px solid rgba(167, 119, 255, 0.85);
+  transform: rotate(45deg);
+  background: rgba(104, 76, 255, 0.15);
+}
+
+.brand-mark span:first-child {
+  width: 1px;
+  height: 30px;
+  background: linear-gradient(
+    transparent,
+    rgba(88, 225, 255, 0.9),
+    transparent
+  );
+}
+
+.brand-mark span:last-child {
+  width: 30px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(88, 225, 255, 0.9),
+    transparent
+  );
+}
+
+.brand-name {
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  line-height: 1;
+}
+
+.brand-subtitle {
+  margin-top: 5px;
+  color: rgba(170, 216, 226, 0.45);
+  font-size: 7px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+}
+
+.system-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  color: rgba(192, 238, 246, 0.5);
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+}
+
+.status-dot,
+.voice-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #55eaff;
+  box-shadow:
+    0 0 7px rgba(85, 234, 255, 0.9),
+    0 0 16px rgba(85, 234, 255, 0.35);
+  animation: status-pulse 1.8s ease-in-out infinite;
+}
+
+.status-divider {
+  width: 22px;
+  height: 1px;
+  background: rgba(102, 218, 237, 0.18);
+}
+
+.icon-button {
+  justify-self: end;
+  display: grid;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(93, 215, 239, 0.13);
+  border-radius: 8px;
+  background: rgba(8, 24, 34, 0.35);
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.icon-button:hover {
+  border-color: rgba(95, 224, 247, 0.42);
+  background: rgba(18, 48, 62, 0.45);
+  box-shadow: 0 0 20px rgba(46, 204, 235, 0.1);
+}
+
+.icon-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: rgba(177, 232, 241, 0.65);
+  stroke-width: 1.25;
+}
+
+/* =========================================================
+   HUD CORNERS
+   ========================================================= */
+
+.hud-corner {
+  position: absolute;
+  z-index: 15;
+  width: 58px;
+  height: 58px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.hud-corner span:first-child {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(86, 222, 247, 0.8), transparent);
+}
+
+.hud-corner span:last-child {
+  position: absolute;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(86, 222, 247, 0.8), transparent);
+}
+
+.hud-corner-top-left {
+  top: 104px;
+  left: 28px;
+}
+
+.hud-corner-top-right {
+  top: 104px;
+  right: 28px;
+  transform: rotate(90deg);
+}
+
+.hud-corner-bottom-left {
+  bottom: 92px;
+  left: 28px;
+  transform: rotate(-90deg);
+}
+
+.hud-corner-bottom-right {
+  right: 28px;
+  bottom: 92px;
+  transform: rotate(180deg);
+}
+
+/* =========================================================
+   DATA STREAMS
+   ========================================================= */
+
+.data-stream {
+  position: absolute;
+  z-index: 5;
+  top: 30%;
+  width: 215px;
+  pointer-events: none;
+  opacity: 0.55;
+}
+
+.data-stream-left {
+  left: 30px;
+}
+
+.data-stream-right {
+  right: 30px;
+}
+
+.data-line {
+  display: grid;
+  grid-template-columns: 28px 1fr 20px;
+  align-items: center;
+  gap: 7px;
+  height: 27px;
+  border-bottom: 1px solid rgba(78, 206, 231, 0.07);
+  color: rgba(136, 209, 222, 0.34);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+  font-size: 7px;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.data-stream-right .data-line {
+  grid-template-columns: 20px 1fr 28px;
+  text-align: right;
+}
+
+.data-index {
+  color: rgba(74, 214, 242, 0.55);
+  font-size: 6px;
+}
+
+.data-line i {
+  display: block;
+  justify-self: end;
+  width: 15px;
+  height: 2px;
+  background: rgba(70, 218, 244, 0.28);
+  box-shadow: 0 0 7px rgba(70, 218, 244, 0.15);
+  animation: data-blink 2.8s ease-in-out infinite;
+}
+
+.data-stream-right .data-line i {
+  justify-self: start;
+}
+
+.data-line:nth-child(2) i {
+  width: 25px;
+  animation-delay: -0.8s;
+}
+
+.data-line:nth-child(3) i {
+  width: 9px;
+  animation-delay: -1.5s;
+}
+
+.data-line:nth-child(4) i {
+  width: 19px;
+  animation-delay: -2s;
+}
+
+/* =========================================================
+   TELEMETRY
+   ========================================================= */
+
+.telemetry {
+  position: absolute;
+  z-index: 10;
+  top: 145px;
+  width: 185px;
+  padding: 12px;
+  border: 1px solid rgba(77, 206, 234, 0.1);
+  background: rgba(2, 12, 19, 0.3);
+  backdrop-filter: blur(7px);
+  pointer-events: none;
+}
+
+.telemetry-left {
+  left: 30px;
+}
+
+.telemetry-right {
+  right: 30px;
+}
+
+.telemetry-title {
+  margin-bottom: 11px;
+  color: rgba(142, 223, 236, 0.46);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 7px;
+  letter-spacing: 0.18em;
+}
+
+.telemetry-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 19px;
+  color: rgba(157, 208, 217, 0.4);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 7px;
+  letter-spacing: 0.08em;
+}
+
+.telemetry-row strong {
+  color: rgba(88, 231, 251, 0.72);
+  font-size: 6px;
+  font-weight: 500;
+}
+
+.telemetry-bar {
+  height: 2px;
+  margin-top: 9px;
+  overflow: hidden;
+  background: rgba(91, 209, 231, 0.08);
+}
+
+.telemetry-bar span {
+  display: block;
+  width: 72%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, #51def6);
+  box-shadow: 0 0 9px rgba(81, 222, 246, 0.7);
+  animation: telemetry-load 3.5s ease-in-out infinite alternate;
+}
+
+.diagnostic-ring {
+  position: relative;
+  width: 52px;
+  height: 52px;
+  margin: 2px auto 12px;
+  border: 1px dashed rgba(86, 222, 247, 0.3);
+  border-radius: 50%;
+  animation: diagnostic-rotate 8s linear infinite;
+}
+
+.diagnostic-ring::before,
+.diagnostic-ring::after {
+  position: absolute;
+  content: "";
+  inset: 8px;
+  border: 1px solid rgba(137, 103, 255, 0.25);
+  border-radius: 50%;
+}
+
+.diagnostic-ring::after {
+  inset: 20px;
+  border-color: rgba(86, 222, 247, 0.7);
+  box-shadow: 0 0 10px rgba(86, 222, 247, 0.35);
+}
+
+.diagnostic-ring-inner {
+  position: absolute;
+  top: 3px;
+  left: 50%;
+  width: 1px;
+  height: 10px;
+  background: #63eaff;
+  transform-origin: 50% 23px;
+  box-shadow: 0 0 8px #63eaff;
+}
+
+.diagnostic-ring-dot {
+  position: absolute;
+  right: 2px;
+  bottom: 9px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #8f7cff;
+  box-shadow: 0 0 10px #8f7cff;
+}
+
+.diagnostic-readout {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 7px;
+  color: rgba(135, 200, 211, 0.4);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.08em;
+}
+
+.diagnostic-readout strong {
+  color: rgba(104, 228, 246, 0.72);
+  font-size: 7px;
+}
+
+/* =========================================================
+   CORE STAGE
+   ========================================================= */
+
+.core-stage {
+  position: absolute;
+  z-index: 8;
+  top: 78px;
+  right: 240px;
+  bottom: 145px;
+  left: 240px;
+  display: grid;
+  place-items: center;
+}
+
+.core-stage::before {
+  position: absolute;
+  width: min(620px, 55vw);
+  height: min(620px, 55vw);
+  content: "";
+  border: 1px solid rgba(65, 214, 239, 0.045);
+  border-radius: 50%;
+  box-shadow:
+    0 0 100px rgba(51, 212, 240, 0.035),
+    inset 0 0 100px rgba(51, 212, 240, 0.025);
+  animation: stage-ring 9s linear infinite;
+}
+
+.core-stage::after {
+  position: absolute;
+  width: min(460px, 42vw);
+  height: min(460px, 42vw);
+  content: "";
+  border: 1px dashed rgba(115, 102, 255, 0.08);
+  border-radius: 50%;
+  animation: stage-ring-reverse 13s linear infinite;
+}
+
+.core-interaction {
+  position: relative;
+  z-index: 5;
+  width: min(590px, 52vw);
+  height: min(590px, 52vw);
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.core-interaction canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.core-connection {
+  position: absolute;
+  z-index: 1;
+  width: 190px;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(75, 221, 245, 0.2),
+    transparent
+  );
+  transform-origin: center;
+  opacity: 0.7;
+}
+
+.connection-one {
+  top: 25%;
+  left: 8%;
+  transform: rotate(28deg);
+  animation: connection-pulse 4s ease-in-out infinite;
+}
+
+.connection-two {
+  right: 8%;
+  bottom: 26%;
+  transform: rotate(28deg);
+  animation: connection-pulse 4s ease-in-out infinite -1.3s;
+}
+
+.connection-three {
+  top: 50%;
+  left: 4%;
+  width: 100px;
+  transform: rotate(-90deg);
+  animation: connection-pulse 4s ease-in-out infinite -2.1s;
+}
+
+.state-label {
+  position: absolute;
+  top: 13%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: rgba(157, 227, 237, 0.58);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+}
+
+.state-indicator {
+  width: 6px;
+  height: 6px;
+  border: 1px solid rgba(87, 226, 248, 0.8);
+  border-radius: 50%;
+  box-shadow: 0 0 9px rgba(87, 226, 248, 0.7);
+  animation: status-pulse 1.5s ease-in-out infinite;
+}
+
+.core-readout {
+  position: absolute;
+  bottom: 4%;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: rgba(117, 205, 218, 0.36);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.18em;
+}
+
+.core-readout strong {
+  color: rgba(111, 226, 246, 0.55);
+  font-weight: 500;
+}
+
+/* =========================================================
+   ACTIVITY CONSOLE
+   ========================================================= */
+
+.activity-console {
+  position: absolute;
+  z-index: 10;
+  right: 30px;
+  bottom: 145px;
+  left: 30px;
+  display: grid;
+  gap: 8px;
+  max-width: 280px;
+  padding: 11px;
+  border-top: 1px solid rgba(76, 210, 236, 0.1);
+  border-bottom: 1px solid rgba(76, 210, 236, 0.07);
+  background: linear-gradient(
+    90deg,
+    rgba(4, 20, 28, 0.3),
+    transparent
+  );
+  pointer-events: none;
+}
+
+.activity-header,
+.activity-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: rgba(118, 201, 214, 0.38);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.15em;
+}
+
+.activity-header span:last-child {
+  color: rgba(79, 224, 247, 0.5);
+}
+
+.activity-wave {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  height: 24px;
+}
+
+.activity-wave span {
+  flex: 1;
+  min-width: 1px;
+  height: 25%;
+  background: rgba(75, 220, 244, 0.4);
+  box-shadow: 0 0 5px rgba(75, 220, 244, 0.12);
+  transform-origin: center;
+  animation: wave 1.3s ease-in-out infinite;
+  animation-delay: calc(var(--wave-index, 0) * -0.08s);
+}
+
+.activity-wave span:nth-child(2n) {
+  height: 55%;
+  animation-delay: -0.4s;
+}
+
+.activity-wave span:nth-child(3n) {
+  height: 85%;
+  animation-delay: -0.7s;
+}
+
+.activity-wave span:nth-child(5n) {
+  height: 42%;
+  animation-delay: -1s;
+}
+
+/* =========================================================
+   BOTTOM CONTROLS
+   ========================================================= */
+
+.bottom-controls {
+  position: absolute;
+  z-index: 25;
+  right: 30px;
+  bottom: 39px;
+  left: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.persona-switcher {
+  display: flex;
+  gap: 7px;
+  padding: 5px;
+  border: 1px solid rgba(78, 207, 232, 0.1);
+  border-radius: 10px;
+  background: rgba(3, 13, 20, 0.58);
+  backdrop-filter: blur(10px);
+}
+
+.persona-switcher button {
+  display: flex;
+  min-width: 125px;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 10px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    background 180ms ease,
+    border-color 180ms ease;
+}
+
+.persona-switcher button:hover {
+  background: rgba(49, 118, 136, 0.08);
+}
+
+.persona-switcher button.active {
+  border-color: rgba(79, 219, 242, 0.17);
+  background: rgba(44, 133, 155, 0.1);
+  box-shadow: inset 0 0 20px rgba(54, 215, 239, 0.025);
+}
+
+.persona-orb {
+  position: relative;
+  width: 23px;
+  height: 23px;
+  flex: 0 0 23px;
+  border-radius: 50%;
+  animation: orb-breathe 2.6s ease-in-out infinite;
+}
+
+.persona-orb::before,
+.persona-orb::after {
+  position: absolute;
+  content: "";
+  border-radius: 50%;
+}
+
+.persona-orb::before {
+  inset: 3px;
+  border: 1px solid rgba(109, 230, 249, 0.65);
+}
+
+.persona-orb::after {
+  inset: 8px;
+  background: currentColor;
+  box-shadow: 0 0 9px currentColor;
+}
+
+.sara-orb {
+  color: #62e9ff;
+  border: 1px solid rgba(98, 233, 255, 0.35);
+  box-shadow:
+    0 0 14px rgba(98, 233, 255, 0.18),
+    inset 0 0 12px rgba(98, 233, 255, 0.08);
+}
+
+.alex-orb {
+  color: #9d82ff;
+  border: 1px solid rgba(157, 130, 255, 0.35);
+  box-shadow:
+    0 0 14px rgba(157, 130, 255, 0.18),
+    inset 0 0 12px rgba(157, 130, 255, 0.08);
+}
+
+.persona-switcher strong {
+  display: block;
+  color: rgba(205, 242, 248, 0.78);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.persona-switcher small {
+  display: block;
+  margin-top: 3px;
+  color: rgba(139, 196, 207, 0.35);
+  font-size: 6px;
+  letter-spacing: 0.1em;
+}
+
+.voice-console {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.voice-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-right: 4px;
+  color: rgba(143, 213, 224, 0.42);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.14em;
+}
+
+.mic-button,
+.chat-button {
+  display: grid;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(84, 218, 241, 0.14);
+  border-radius: 50%;
+  background: rgba(4, 19, 27, 0.68);
+  cursor: pointer;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+.mic-button:hover,
+.chat-button:hover,
+.mic-button.active,
+.chat-button.active {
+  border-color: rgba(80, 223, 246, 0.48);
+  background: rgba(27, 84, 99, 0.28);
+  box-shadow:
+    0 0 22px rgba(67, 215, 239, 0.12),
+    inset 0 0 15px rgba(67, 215, 239, 0.05);
+  transform: translateY(-1px);
+}
+
+.mic-button span {
+  position: relative;
+  width: 8px;
+  height: 13px;
+  border: 1px solid rgba(180, 235, 242, 0.72);
+  border-radius: 6px;
+}
+
+.mic-button span::before {
+  position: absolute;
+  top: 10px;
+  left: -4px;
+  width: 14px;
+  height: 8px;
+  content: "";
+  border: 1px solid rgba(180, 235, 242, 0.6);
+  border-top: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.mic-button span::after {
+  position: absolute;
+  top: 18px;
+  left: 3px;
+  width: 1px;
+  height: 5px;
+  content: "";
+  background: rgba(180, 235, 242, 0.65);
+}
+
+.chat-button svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: rgba(180, 235, 242, 0.68);
+  stroke-width: 1.3;
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.system-footer {
+  position: absolute;
+  z-index: 20;
+  right: 30px;
+  bottom: 14px;
+  left: 30px;
+  display: flex;
+  justify-content: space-between;
+  color: rgba(115, 178, 190, 0.25);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.15em;
+  pointer-events: none;
+}
+
+/* =========================================================
+   CHAT
+   ========================================================= */
+
+.chat-panel {
+  position: absolute;
+  z-index: 40;
+  top: 96px;
+  right: 30px;
+  bottom: 100px;
+  width: 330px;
+  overflow: hidden;
+  border: 1px solid rgba(84, 217, 240, 0.18);
+  border-radius: 12px;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 22, 31, 0.94),
+      rgba(2, 10, 17, 0.97)
+    );
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.45),
+    0 0 45px rgba(42, 190, 221, 0.06);
+  backdrop-filter: blur(18px);
+  animation: panel-in 220ms ease-out;
+}
+
+.chat-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px;
+  border-bottom: 1px solid rgba(85, 216, 238, 0.1);
+}
+
+.chat-panel-header span {
+  display: block;
+  color: rgba(123, 204, 217, 0.38);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.15em;
+}
+
+.chat-panel-header strong {
+  display: block;
+  margin-top: 4px;
+  color: rgba(198, 239, 246, 0.78);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.chat-panel-header button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid rgba(85, 216, 238, 0.12);
+  border-radius: 6px;
+  background: transparent;
+  color: rgba(180, 232, 239, 0.55);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.chat-panel-body {
+  height: calc(100% - 118px);
+  padding: 18px;
+}
+
+.chat-system-message {
+  padding: 12px;
+  border-left: 1px solid rgba(80, 224, 246, 0.45);
+  background: rgba(54, 171, 195, 0.035);
+}
+
+.chat-system-message span {
+  color: rgba(75, 222, 246, 0.62);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 6px;
+  letter-spacing: 0.16em;
+}
+
+.chat-system-message p {
+  margin: 8px 0 0;
+  color: rgba(188, 225, 232, 0.48);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.chat-input {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  left: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 40px;
+  padding: 0 12px;
+  border: 1px solid rgba(79, 212, 237, 0.1);
+  border-radius: 7px;
+  color: rgba(143, 204, 214, 0.3);
+  font-family: "SFMono-Regular", Consolas, monospace;
+  font-size: 7px;
+}
+
+.chat-input-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #58ddf7;
+  box-shadow: 0 0 9px #58ddf7;
+  animation: status-pulse 1.4s infinite;
+}
+
+/* =========================================================
+   PERSONA STATES
+   ========================================================= */
+
+.persona-alex .core-stage::before {
+  border-color: rgba(137, 109, 255, 0.05);
+}
+
+.persona-alex .state-indicator,
+.persona-alex .status-dot {
+  border-color: rgba(158, 128, 255, 0.8);
+  background: #9e80ff;
+  box-shadow:
+    0 0 9px rgba(158, 128, 255, 0.8),
+    0 0 17px rgba(158, 128, 255, 0.25);
+}
+
+.persona-alex .scan-sweep {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(155, 123, 255, 0.08) 20%,
+    rgba(155, 123, 255, 0.5) 50%,
+    rgba(155, 123, 255, 0.08) 80%,
+    transparent
+  );
+}
+
+.state-listening .core-stage::after {
+  animation-duration: 4s;
+}
+
+.state-thinking .core-stage::before {
+  animation-duration: 4s;
+}
+
+.state-speaking .core-stage::before,
+.state-speaking .core-stage::after {
+  box-shadow:
+    0 0 120px rgba(65, 229, 210, 0.08),
+    inset 0 0 120px rgba(65, 229, 210, 0.04);
+}
+
+/* =========================================================
+   ANIMATIONS
+   ========================================================= */
+
+@keyframes ambient-drift {
+  0% {
+    transform: translate3d(-12px, -8px, 0) scale(0.95);
+  }
+
+  100% {
+    transform: translate3d(20px, 18px, 0) scale(1.08);
+  }
+}
+
+@keyframes grid-drift {
+  from {
+    background-position:
+      0 0,
+      0 0;
+  }
+
+  to {
+    background-position:
+      0 54px,
+      54px 0;
+  }
+}
+
+@keyframes scan-sweep {
+  0% {
+    top: -10%;
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 0.8;
+  }
+
+  48% {
+    opacity: 0.4;
+  }
+
+  55% {
+    opacity: 0;
+  }
+
+  100% {
+    top: 110%;
+    opacity: 0;
+  }
+}
+
+@keyframes particle-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: translate3d(
+      calc((var(--particle-index) % 7) * 4px - 12px),
+      calc((var(--particle-index) % 9) * -5px),
+      0
+    );
+  }
+}
+
+@keyframes particle-blink {
+  0% {
+    opacity: 0.08;
+  }
+
+  50% {
+    opacity: 0.55;
+  }
+
+  100% {
+    opacity: 0.12;
+  }
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.85);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.15);
+  }
+}
+
+@keyframes data-blink {
+  0%,
+  100% {
+    opacity: 0.2;
+    transform: scaleX(0.7);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes telemetry-load {
+  0% {
+    width: 45%;
+  }
+
+  50% {
+    width: 78%;
+  }
+
+  100% {
+    width: 61%;
+  }
+}
+
+@keyframes diagnostic-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes stage-ring {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes stage-ring-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes connection-pulse {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scaleX(0.75) rotate(28deg);
+  }
+
+  50% {
+    opacity: 0.75;
+    transform: scaleX(1) rotate(28deg);
+  }
+}
+
+@keyframes orb-breathe {
+  0%,
+  100% {
+    transform: scale(0.94);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
+    transform: scaleY(0.35);
+    opacity: 0.25;
+  }
+
+  50% {
+    transform: scaleY(1.35);
+    opacity: 0.9;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 1100px) {
+  .data-stream,
+  .telemetry {
+    display: none;
+  }
+
+  .core-stage {
+    right: 80px;
+    left: 80px;
+  }
+
+  .activity-console {
+    max-width: 230px;
+  }
+}
+
+@media (max-width: 720px) {
+  .prozyn-app {
+    min-height: 520px;
+  }
+
+  .topbar {
+    grid-template-columns: 1fr auto;
+    padding: 16px;
+  }
+
+  .system-status {
+    display: none;
+  }
+
+  .brand-subtitle {
+    display: none;
+  }
+
+  .hud-corner {
+    display: none;
+  }
+
+  .core-stage {
+    top: 70px;
+    right: 0;
+    bottom: 145px;
+    left: 0;
+  }
+
+  .core-stage::before {
+    width: 82vw;
+    height: 82vw;
+  }
+
+  .core-stage::after {
+    width: 64vw;
+    height: 64vw;
+  }
+
+  .core-interaction {
+    width: min(500px, 90vw);
+    height: min(500px, 90vw);
+  }
+
+  .state-label {
+    top: 7%;
+  }
+
+  .core-readout {
+    bottom: 3%;
+  }
+
+  .activity-console {
+    right: 16px;
+    bottom: 126px;
+    left: 16px;
+    max-width: none;
+  }
+
+  .bottom-controls {
+    right: 16px;
+    bottom: 38px;
+    left: 16px;
+  }
+
+  .persona-switcher button {
+    min-width: 0;
+    padding: 7px;
+  }
+
+  .persona-switcher small {
+    display: none;
+  }
+
+  .voice-status {
+    display: none;
+  }
+
+  .system-footer {
+    right: 16px;
+    bottom: 13px;
+    left: 16px;
+  }
+
+  .system-footer span:nth-child(2) {
+    display: none;
+  }
+
+  .chat-panel {
+    top: 74px;
+    right: 16px;
+    bottom: 120px;
+    width: calc(100vw - 32px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
